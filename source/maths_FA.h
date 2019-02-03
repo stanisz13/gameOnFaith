@@ -282,6 +282,19 @@ DVec4 addDVec4(DVec4 v, DVec4 w);
 UVec4 addUVec4(UVec4 v, UVec4 w);
 IVec4 addIVec4(IVec4 v, IVec4 w);
 
+FVec2 subFVec2(FVec2 v, FVec2 w);
+DVec2 subDVec2(DVec2 v, DVec2 w);
+UVec2 subUVec2(UVec2 v, UVec2 w);
+IVec2 subIVec2(IVec2 v, IVec2 w);
+FVec3 subFVec3(FVec3 v, FVec3 w);
+DVec3 subDVec3(DVec3 v, DVec3 w);
+UVec3 subUVec3(UVec3 v, UVec3 w);
+IVec3 subIVec3(IVec3 v, IVec3 w);
+FVec4 subFVec4(FVec4 v, FVec4 w);
+DVec4 subDVec4(DVec4 v, DVec4 w);
+UVec4 subUVec4(UVec4 v, UVec4 w);
+IVec4 subIVec4(IVec4 v, IVec4 w);
+
 FVec2 hadamardFVec2(FVec2 v, FVec2 w);
 DVec2 hadamardDVec2(DVec2 v, DVec2 w);
 UVec2 hadamardUVec2(UVec2 v, UVec2 w);

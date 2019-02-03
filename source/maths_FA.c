@@ -593,6 +593,127 @@ IVec4 addIVec4(IVec4 v, IVec4 w)
     return res;
 }
 
+FVec2 subFVec2(FVec2 v, FVec2 w)
+{
+    FVec2 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+
+    return res;
+}
+
+DVec2 subDVec2(DVec2 v, DVec2 w)
+{
+    DVec2 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+
+    return res;
+}
+
+UVec2 subUVec2(UVec2 v, UVec2 w)
+{
+    UVec2 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+
+    return res;
+}
+
+IVec2 subIVec2(IVec2 v, IVec2 w)
+{
+    IVec2 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+
+    return res;
+}
+
+FVec3 subFVec3(FVec3 v, FVec3 w)
+{
+    FVec3 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+    res.z -= w.z;
+    
+    return res;
+}
+DVec3 subDVec3(DVec3 v, DVec3 w)
+{
+    DVec3 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+    res.z -= w.z;
+    
+    return res;
+}
+
+UVec3 subUVec3(UVec3 v, UVec3 w)
+{
+    UVec3 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+    res.z -= w.z;
+    
+    return res;
+}
+
+IVec3 subIVec3(IVec3 v, IVec3 w)
+{
+    IVec3 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+    res.z -= w.z;
+    
+    return res;
+}
+
+FVec4 subFVec4(FVec4 v, FVec4 w)
+{
+    FVec4 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+    res.z -= w.z;
+    res.w -= w.w;
+    
+    return res;
+}
+
+DVec4 subDVec4(DVec4 v, DVec4 w)
+{
+    DVec4 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+    res.z -= w.z;
+    res.w -= w.w;
+    
+    return res;
+
+}
+
+UVec4 subUVec4(UVec4 v, UVec4 w)
+{
+    UVec4 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+    res.z -= w.z;
+    res.w -= w.w;
+    
+    return res;
+
+}
+
+IVec4 subIVec4(IVec4 v, IVec4 w)
+{
+    IVec4 res = v;
+    res.x -= w.x;
+    res.y -= w.y;
+    res.z -= w.z;
+    res.w -= w.w;
+    
+    return res;
+}
+
 FVec2 hadamardFVec2(FVec2 v, FVec2 w)
 {
     FVec2 res = v;

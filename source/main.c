@@ -101,10 +101,8 @@ int main(int argc, char* argv[])
 
     FMat4 model = translationFMat4(initFVec3(0.0f, 0.0f, -3.0f));
     FMat4 proj = perspectiveFMat4(0.01f, 10.0f, aRatio, degreesToRadians(45.0f));
-    FMat4 view = lookAt();
     
     glUniformMatrix4fv_FA(projLoc, 1, GL_FALSE, proj.mem);
-    glUniformMatrix4fv_FA(viewLoc, 1, GL_FALSE, view.mem);
 
 #if 0
     disableVSyncIfPossible();
@@ -118,6 +116,8 @@ int main(int argc, char* argv[])
     float elapsed = 0.0f;
     float maxFrameTimeNoticed = 0.0f;
 
+
+    FVec3 prevRotation = initFVec3(0.0f, 0.0f, -10.0f);
     
     while(1)
     {
@@ -201,7 +201,30 @@ int main(int argc, char* argv[])
         glClearColor(0, 0.5, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        model = mulFMat4(model, rotationFMat4(dt/1000, initFVec3(1.0f, 1.0f, 0.3f)));
+
+        
+        camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
+        FMat4 view = lookAt();
+        glUniformMatrix4fv_FA(viewLoc, 1, GL_FALSE, view.mem);
+    
+        if (mouseState_FA.left == 1)
+        {
+            FVec3 nowRotation = initFVec3(mouseState_FA.posX, mouseState_FA.posY, -10.0f);
+        
+            FVec3 axisOfRotation = crossProductFVec3(prevRotation, nowRotation);
+
+            if (lengthSquaredFVec3(axisOfRotation) > EPSILON)
+            {
+                axisOfRotation = normalizeFVec3(axisOfRotation);
+
+                float angleOfRotation = 0.002f * dt;            
+                model = mulFMat4(model, rotationFMat4(angleOfRotation, axisOfRotation));
+
+                prevRotation = nowRotation;
+
+            }
+        }
+        
         glUniformMatrix4fv_FA(modelLoc, 1, GL_FALSE, model.mem);
     
 
