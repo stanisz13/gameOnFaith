@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     float maxFrameTimeNoticed = 0.0f;
 
 
-    FVec3 prevRotation = initFVec3(0.0f, 0.0f, -10.0f);
+    FVec3 prevRotation = initFVec3(0.0f, 0.0f, -1.0f);
     
     while(1)
     {
@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
         glClearColor(0, 0.5, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+        
         
         camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
         FMat4 view = lookAt();
@@ -209,8 +209,9 @@ int main(int argc, char* argv[])
     
         if (mouseState_FA.left == 1)
         {
-            FVec3 nowRotation = initFVec3(mouseState_FA.posX, mouseState_FA.posY, -10.0f);
-        
+            FVec3 nowRotation = initFVec3(mouseState_FA.posX, mouseState_FA.posY, -1.0f);
+            nowRotation = normalizeFVec3(nowRotation);
+            
             FVec3 axisOfRotation = crossProductFVec3(prevRotation, nowRotation);
 
             if (lengthSquaredFVec3(axisOfRotation) > EPSILON)

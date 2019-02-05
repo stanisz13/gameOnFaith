@@ -1400,7 +1400,7 @@ FMat3 scaleFMat3(FMat3 a, float b)
 FMat4 scaleFMat4(FMat4 a, float b)
 {
     FMat4 res = a;
-
+    
     for (unsigned i = 0; i < 4; ++i)
     {
         for (unsigned j = 0; j < 4; ++j)
@@ -1601,6 +1601,215 @@ FMat4 mulFMat4(FMat4 a, FMat4 b)
             }
         }
     }
+    return res;
+}
+
+float detFMat2(FMat2 a)
+{
+    float res = a.mem[0] * a.mem[3] - a.mem[1] * a.mem[2];
+
+    return res;
+}
+
+float detFMat3(FMat3 a)
+{
+    float res = a.mem[0] * a.mem[4] * a.mem[8]
+        + a.mem[3] * a.mem[7] * a.mem[2]
+        + a.mem[6] * a.mem[1] * a.mem[5]
+        - a.mem[6] * a.mem[4] * a.mem[2]
+        - a.mem[7] * a.mem[5] * a.mem[0]
+        - a.mem[8] * a.mem[3] * a.mem[1];
+
+    return res;
+}
+
+float detFMat4(FMat4 a)
+{
+    float res = a.mem[12] * a.mem[9] * a.mem[6] * a.mem[3]
+        - a.mem[8] * a.mem[13] * a.mem[6] * a.mem[3]
+        + a.mem[12] * a.mem[5] * a.mem[10] * a.mem[3]
+        + a.mem[4] * a.mem[13] * a.mem[10] * a.mem[3]
+        + a.mem[8] * a.mem[5] * a.mem[14] * a.mem[3]
+        - a.mem[4] * a.mem[9] * a.mem[14] * a.mem[3]
+        - a.mem[12] * a.mem[9] * a.mem[2] * a.mem[7]
+        + a.mem[8] * a.mem[13] * a.mem[2] * a.mem[7]
+        + a.mem[12] * a.mem[1] * a.mem[10] * a.mem[7]
+        - a.mem[0] * a.mem[13] * a.mem[10] * a.mem[7]
+        - a.mem[8] * a.mem[1] * a.mem[14] * a.mem[7]
+        + a.mem[0] * a.mem[9] * a.mem[14] * a.mem[7]
+        + a.mem[12] * a.mem[5] * a.mem[2] * a.mem[11]
+        - a.mem[4] * a.mem[13] * a.mem[2] * a.mem[11]
+        - a.mem[12] * a.mem[1] * a.mem[6] * a.mem[11]
+        + a.mem[0] * a.mem[13] * a.mem[6] * a.mem[11]
+        + a.mem[4] * a.mem[1] * a.mem[14] * a.mem[11]
+        - a.mem[0] * a.mem[5] * a.mem[14] * a.mem[11]
+        - a.mem[8] * a.mem[5] * a.mem[2] * a.mem[15]
+        + a.mem[4] * a.mem[9] * a.mem[2] * a.mem[15]
+        + a.mem[8] * a.mem[1] * a.mem[6] * a.mem[15]
+        - a.mem[0] * a.mem[9] * a.mem[6] * a.mem[15]
+        - a.mem[4] * a.mem[1] * a.mem[10] * a.mem[15]
+        + a.mem[0] * a.mem[5] * a.mem[10] * a.mem[15];
+
+    return res;
+}
+
+FMat2 inverseFMat2(FMat2 a)
+{
+    FMat2 res;
+
+    float oneOverDet = 1.0f / detFMat2(a);
+
+    res.mem[0] = a.mem[3];
+    res.mem[1] = -a.mem[1];
+    res.mem[2] = -a.mem[2];
+    res.mem[3] = a.mem[0];
+    
+    res = scaleFMat2(res, oneOverDet);
+    
+    return res;
+}
+
+FMat3 inverseFMat3(FMat3 a)
+{
+    FMat3 res;
+
+    float oneOverDet = 1.0f / detFMat3(a);
+
+    res.mem[0] = a.mem[4] * a.mem[8] - a.mem[5] * a.mem[7];
+    res.mem[1] = a.mem[5] * a.mem[6] - a.mem[3] * a.mem[8];
+    res.mem[2] = a.mem[3] * a.mem[7] - a.mem[4] * a.mem[6];
+    res.mem[3] = a.mem[2] * a.mem[7] - a.mem[1] * a.mem[8];
+    res.mem[4] = a.mem[0] * a.mem[8] - a.mem[2] * a.mem[6];
+    res.mem[5] = a.mem[1] * a.mem[6] - a.mem[0] * a.mem[7];
+    res.mem[6] = a.mem[1] * a.mem[5] - a.mem[2] * a.mem[4];
+    res.mem[7] = a.mem[2] * a.mem[3] - a.mem[0] * a.mem[5];
+    res.mem[8] = a.mem[0] * a.mem[4] - a.mem[1] * a.mem[3];
+
+    res = scaleFMat3(res, oneOverDet);
+    
+    return res;
+}
+
+FMat4 inverseFMat4(FMat4 a)
+{
+    FMat4 res;
+
+    float oneOverDet = 1.0f / detFMat4(a);
+    
+    res.mem[0] = a.mem[9] * a.mem[14] * a.mem[7]
+        - a.mem[13] * a.mem[10] * a.mem[7]
+        + a.mem[13] * a.mem[6] * a.mem[11]
+        - a.mem[5] * a.mem[14] * a.mem[11]
+        - a.mem[9] * a.mem[6] * a.mem[15]
+        + a.mem[5] * a.mem[10] * a.mem[15];
+    
+    res.mem[1] = a.mem[13] * a.mem[10] * a.mem[3]
+        - a.mem[9] * a.mem[14] * a.mem[3]
+        - a.mem[13] * a.mem[2] * a.mem[11]
+        + a.mem[1] * a.mem[14] * a.mem[11]
+        + a.mem[9] * a.mem[2] * a.mem[15]
+        - a.mem[1] * a.mem[10] * a.mem[15];
+    
+    res.mem[2] = a.mem[5] * a.mem[14] * a.mem[3]
+        - a.mem[13] * a.mem[6] * a.mem[3]
+        + a.mem[13] * a.mem[2] * a.mem[7]
+        - a.mem[1] * a.mem[14] * a.mem[7]
+        - a.mem[5] * a.mem[2] * a.mem[15]
+        + a.mem[1] * a.mem[6] * a.mem[15];
+    
+    res.mem[3] = a.mem[9] * a.mem[6] * a.mem[3]
+        - a.mem[5] * a.mem[10] * a.mem[3]
+        - a.mem[9] * a.mem[2] * a.mem[7]
+        + a.mem[1] * a.mem[10] * a.mem[7]
+        + a.mem[5] * a.mem[2] * a.mem[11]
+        - a.mem[1] * a.mem[6] * a.mem[11];
+    
+    res.mem[4] = a.mem[12] * a.mem[10] * a.mem[7]
+        - a.mem[8] * a.mem[14] * a.mem[7]
+        - a.mem[12] * a.mem[6] * a.mem[11]
+        + a.mem[4] * a.mem[14] * a.mem[11]
+        + a.mem[8] * a.mem[6] * a.mem[15]
+        - a.mem[4] * a.mem[10] * a.mem[15];
+
+    res.mem[5] = a.mem[8] * a.mem[14] * a.mem[3]
+        - a.mem[12] * a.mem[9] * a.mem[3]
+        + a.mem[12] * a.mem[2] * a.mem[11]
+        - a.mem[0] * a.mem[14] * a.mem[11]
+        - a.mem[8] * a.mem[2] * a.mem[15]
+        + a.mem[0] * a.mem[10] * a.mem[15];
+
+    res.mem[6] = a.mem[12] * a.mem[6] * a.mem[3]
+        - a.mem[4] * a.mem[14] * a.mem[3]
+        - a.mem[12] * a.mem[2] * a.mem[7]
+        + a.mem[0] * a.mem[14] * a.mem[7]
+        + a.mem[4] * a.mem[2] * a.mem[15]
+        - a.mem[0] * a.mem[6] * a.mem[15];
+
+    res.mem[7] = a.mem[4] * a.mem[10] * a.mem[3]
+        - a.mem[8] * a.mem[6] * a.mem[3]
+        + a.mem[8] * a.mem[2] * a.mem[7]
+        - a.mem[0] * a.mem[10] * a.mem[7]
+        - a.mem[4] * a.mem[2] * a.mem[11]
+        + a.mem[0] * a.mem[6] * a.mem[11];
+
+    res.mem[8] = a.mem[8] * a.mem[13] * a.mem[7]
+        - a.mem[12] * a.mem[9] * a.mem[7]
+        + a.mem[12] * a.mem[5] * a.mem[11]
+        - a.mem[4] * a.mem[13] * a.mem[11]
+        - a.mem[8] * a.mem[5] * a.mem[15]
+        + a.mem[4] * a.mem[9] * a.mem[15];
+
+    res.mem[9] = a.mem[12] * a.mem[9] * a.mem[3]
+        - a.mem[8] * a.mem[13] * a.mem[3]
+        - a.mem[12] * a.mem[1] * a.mem[11]
+        + a.mem[0] * a.mem[13] * a.mem[11]
+        + a.mem[8] * a.mem[1] * a.mem[15]
+        - a.mem[0] * a.mem[9] * a.mem[15];
+
+    res.mem[10] = a.mem[4] * a.mem[13] * a.mem[3]
+        - a.mem[12] * a.mem[5] * a.mem[3]
+        + a.mem[12] * a.mem[1] * a.mem[7]
+        - a.mem[0] * a.mem[13] * a.mem[7]
+        - a.mem[4] * a.mem[1] * a.mem[15]
+        + a.mem[0] * a.mem[5] * a.mem[15];
+    
+    res.mem[11] = a.mem[8] * a.mem[5] * a.mem[3]
+        - a.mem[4] * a.mem[9] * a.mem[3]
+        - a.mem[8] * a.mem[1] * a.mem[7]
+        + a.mem[0] * a.mem[9] * a.mem[7]
+        + a.mem[4] * a.mem[1] * a.mem[11]
+        - a.mem[0] * a.mem[5] * a.mem[11];
+
+    res.mem[12] = a.mem[12] * a.mem[9] * a.mem[6]
+        - a.mem[8] * a.mem[13] * a.mem[6]
+        - a.mem[12] * a.mem[5] * a.mem[10]
+        + a.mem[4] * a.mem[13] * a.mem[10]
+        + a.mem[8] * a.mem[5] * a.mem[14]
+        - a.mem[4] * a.mem[9] * a.mem[14];
+    
+    res.mem[13] = a.mem[8] * a.mem[13] * a.mem[2]
+        - a.mem[12] * a.mem[9] * a.mem[2]
+        + a.mem[12] * a.mem[1] * a.mem[10]
+        - a.mem[0] * a.mem[13] * a.mem[10]
+        - a.mem[8] * a.mem[1] * a.mem[14]
+        + a.mem[0] * a.mem[9] * a.mem[14];
+
+    res.mem[14] = a.mem[12] * a.mem[5] * a.mem[2]
+        - a.mem[4] * a.mem[13] * a.mem[2]
+        - a.mem[12] * a.mem[1] * a.mem[6]
+        + a.mem[0] * a.mem[13] * a.mem[6]
+        + a.mem[4] * a.mem[1] * a.mem[14]
+        - a.mem[0] * a.mem[5] * a.mem[14];
+
+    res.mem[15] = a.mem[4] * a.mem[9] * a.mem[2]
+        - a.mem[8] * a.mem[5] * a.mem[2]
+        + a.mem[8] * a.mem[1] * a.mem[6]
+        - a.mem[0] * a.mem[9] * a.mem[6]
+        - a.mem[4] * a.mem[1] * a.mem[10]
+        + a.mem[0] * a.mem[5] * a.mem[10];
+    
+    res = scaleFMat4(res, oneOverDet);
+    
     return res;
 }
 
