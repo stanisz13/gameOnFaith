@@ -116,9 +116,6 @@ int main(int argc, char* argv[])
     float elapsed = 0.0f;
     float maxFrameTimeNoticed = 0.0f;
 
-
-    FVec3 prevRotation = initFVec3(0.0f, 0.0f, -1.0f);
-    
     while(1)
     {
         XEvent event;
@@ -185,6 +182,7 @@ int main(int argc, char* argv[])
 
                 case KeyPress:
                     keysPressed_FA[event.xkey.keycode] = 1;
+                    //logU(event.xkey.keycode);
                     break;
                     
                 case KeyRelease:
@@ -197,7 +195,7 @@ int main(int argc, char* argv[])
         {
             break;
         }
-
+        
         glClearColor(0, 0.5, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -206,28 +204,9 @@ int main(int argc, char* argv[])
         camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
         FMat4 view = lookAt();
         glUniformMatrix4fv_FA(viewLoc, 1, GL_FALSE, view.mem);
-    
-        if (mouseState_FA.left == 1)
-        {
-            FVec3 nowRotation = initFVec3(mouseState_FA.posX, mouseState_FA.posY, -1.0f);
-            nowRotation = normalizeFVec3(nowRotation);
-            
-            FVec3 axisOfRotation = crossProductFVec3(prevRotation, nowRotation);
-
-            if (lengthSquaredFVec3(axisOfRotation) > EPSILON)
-            {
-                axisOfRotation = normalizeFVec3(axisOfRotation);
-
-                float angleOfRotation = 0.002f * dt;            
-                model = mulFMat4(model, rotationFMat4(angleOfRotation, axisOfRotation));
-
-                prevRotation = nowRotation;
-
-            }
-        }
         
-        glUniformMatrix4fv_FA(modelLoc, 1, GL_FALSE, model.mem);
-    
+        model = mulFMat4(model, rotationFMat4(0.001f * dt, initFVec3(1.0f, 1.0f, 1.0f)));
+        glUniformMatrix4fv_FA(modelLoc, 1, GL_FALSE, model.mem);    
 
         
         glDrawArrays(GL_TRIANGLES, 0, 36);
