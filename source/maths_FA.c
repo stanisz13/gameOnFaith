@@ -1653,11 +1653,11 @@ float detFMat4(FMat4 a)
     return res;
 }
 
-FMat2 inverseFMat2(FMat2 a)
+FMat2 inverseFMat2(FMat2 a, float det)
 {
     FMat2 res;
 
-    float oneOverDet = 1.0f / detFMat2(a);
+    float oneOverDet = 1.0f / det;
 
     res.mem[0] = a.mem[3];
     res.mem[1] = -a.mem[1];
@@ -1669,11 +1669,11 @@ FMat2 inverseFMat2(FMat2 a)
     return res;
 }
 
-FMat3 inverseFMat3(FMat3 a)
+FMat3 inverseFMat3(FMat3 a, float det)
 {
     FMat3 res;
 
-    float oneOverDet = 1.0f / detFMat3(a);
+    float oneOverDet = 1.0f / det;
 
     res.mem[0] = a.mem[4] * a.mem[8] - a.mem[5] * a.mem[7];
     res.mem[1] = a.mem[5] * a.mem[6] - a.mem[3] * a.mem[8];
@@ -1690,11 +1690,11 @@ FMat3 inverseFMat3(FMat3 a)
     return res;
 }
 
-FMat4 inverseFMat4(FMat4 a)
+FMat4 inverseFMat4(FMat4 a, float det)
 {
     FMat4 res;
 
-    float oneOverDet = 1.0f / detFMat4(a);
+    float oneOverDet = 1.0f / det;
     
     res.mem[0] = a.mem[9] * a.mem[14] * a.mem[7]
         - a.mem[13] * a.mem[10] * a.mem[7]

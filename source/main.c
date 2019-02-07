@@ -3,6 +3,36 @@
 
 int isRunning = 1;
 
+
+FVec3 mousePositionInWorld(FMat4 proj, FMat4 view)
+{
+    FVec3 res = {};
+    
+    FVec4 clipCoords = initFVec4(mouseState_FA.posX, mouseState_FA.posY, -1.0f, 1.0f);
+
+    float projDet = detFMat4(proj);
+    FMat4 invertedProjection = inverseFMat4(proj, projDet);
+    FVec4 eyeCoords = mulFMat4ByFVec4(invertedProjection, clipCoords);
+    eyeCoords.z = -1.0f;
+    eyeCoords.w = 0.0f;
+
+    float viewDet = detFMat4(view);
+    FMat4 invertedView = inverseFMat4(view, viewDet);
+    FVec4 worldCoords = mulFMat4ByFVec4(invertedView, eyeCoords);
+
+    res = initFVec3(worldCoords.x, worldCoords.y, worldCoords.z);
+
+    res = normalizeFVec3(res);
+
+
+    //NOTE(Stanisz13): noticed that the sign of Y is wrong, dont know
+    // if maybe this should be that way!
+    res.y *= -1.0f;
+    
+    return res;
+}
+
+
 int main(int argc, char* argv[])
 {
     newLine();
@@ -195,24 +225,33 @@ int main(int argc, char* argv[])
         {
             break;
         }
-        
-        glClearColor(0, 0.5, 1, 1);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
-        
         camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
         FMat4 view = lookAt();
         glUniformMatrix4fv_FA(viewLoc, 1, GL_FALSE, view.mem);
         
         model = mulFMat4(model, rotationFMat4(0.001f * dt, initFVec3(1.0f, 1.0f, 1.0f)));
         glUniformMatrix4fv_FA(modelLoc, 1, GL_FALSE, model.mem);    
+        
+        glClearColor(0, 0.5, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        FVec3 mouseInWorld = mousePositionInWorld(proj, view);
+
+        logF(mouseInWorld.x);
+        logF(mouseInWorld.y);
+        logF(mouseInWorld.z);
+        newLine();
 
         
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
         glXSwapBuffers(contextData_FA.display, contextData_FA.window);
 
+
+
+
+        
         struct timespec nowTime;
         clock_gettime(CLOCK_MONOTONIC_RAW, &nowTime);
         dt = (nowTime.tv_sec - prevTime.tv_sec) * 1000000
