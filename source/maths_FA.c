@@ -1939,7 +1939,7 @@ FMat4 translationFMat4(FVec3 v)
     FMat4 res = identityFMat4();
 
     res.col4.x = v.x;
-    res.col4.y = v.y;
+    res.col4.y = -v.y;
     res.col4.z = v.z;
     
     return res;
