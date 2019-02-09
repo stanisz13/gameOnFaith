@@ -1813,6 +1813,50 @@ FMat4 inverseFMat4(FMat4 a, float det)
     return res;
 }
 
+FMat2 transposeFMat2(FMat2 a)
+{
+    FMat2 res = a;
+
+    res.col1.y = a.col2.x;
+    res.col2.x = a.col1.y;
+    
+    return res;
+}
+
+FMat3 transposeFMat3(FMat3 a)
+{
+    FMat3 res = a;
+
+    res.col1.y = a.col2.x;
+    res.col1.z = a.col3.x;
+    res.col2.x = a.col1.y;
+    res.col2.z = a.col3.y;
+    res.col3.x = a.col1.z;
+    res.col3.y = a.col2.z;
+    
+    return res;
+}
+
+FMat4 transposeFMat4(FMat4 a)
+{
+    FMat4 res = a;
+
+    res.col1.y = a.col2.x;
+    res.col1.z = a.col3.x;
+    res.col1.w = a.col4.x;
+    res.col2.x = a.col1.y;
+    res.col2.z = a.col3.y;
+    res.col2.w = a.col4.y;
+    res.col3.x = a.col1.z;
+    res.col3.y = a.col2.z;
+    res.col3.w = a.col4.z;
+    res.col4.x = a.col1.w;
+    res.col4.y = a.col2.w;
+    res.col4.z = a.col3.w;
+    
+    return res;
+}
+
 FVec2 mulFMat2ByFVec2(FMat2 a, FVec2 b)
 {
     FVec2 res = {};

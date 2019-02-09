@@ -405,6 +405,10 @@ FMat2 inverseFMat2(FMat2 a, float det);
 FMat3 inverseFMat3(FMat3 a, float det);
 FMat4 inverseFMat4(FMat4 a, float det);
 
+FMat2 transposeFMat2(FMat2 a);
+FMat3 transposeFMat3(FMat3 a);
+FMat4 transposeFMat4(FMat4 a);
+
 FVec2 mulFMat2ByFVec2(FMat2 a, FVec2 b);
 FVec3 mulFMat3ByFVec3(FMat3 a, FVec3 b);
 FVec4 mulFMat4ByFVec4(FMat4 a, FVec4 b);

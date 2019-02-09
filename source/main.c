@@ -34,6 +34,18 @@ FVec3 mouseDirection(FMat4 proj, FMat4 view)
 
 unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
 {
+    model.col4.y *= -1.0f;
+
+    float det = detFMat4(model);
+    FMat4 modelInverse = inverseFMat4(model, det);
+    
+    FVec4 origin4 = mulFMat4ByFVec4(modelInverse, initFVec4(origin.x, origin.y, origin.z, 1.0f));
+    FVec4 dir4 = mulFMat4ByFVec4(modelInverse, initFVec4(dir.x, dir.y, dir.z, 0.0f));
+
+    
+    origin = initFVec3(origin4.x, origin4.y, origin4.z);
+    dir = initFVec3(dir4.x, dir4.y, dir4.z);
+
     int sign[3];
     FVec3 invDir = initFVec3(1.0f / dir.x, 1.0f / dir.y, 1.0f / dir.z);
     sign[0] = (invDir.x < 0);
@@ -44,18 +56,7 @@ unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
     bounds[0] = initFVec3(-0.5f, -0.5f, -0.5f);
     bounds[1] = initFVec3(0.5f, 0.5f, 0.5f);
 
-    
-    float det = detFMat4(model);
-
-    model.col4.y *= -1.0f;
-    FMat4 modelInverse = inverseFMat4(model, det);
-    
-    FVec4 origin4 = mulFMat4ByFVec4(modelInverse, initFVec4(origin.x, origin.y, origin.z, 1.0f));
-    FVec4 dir4 = mulFMat4ByFVec4(modelInverse, initFVec4(dir.x, dir.y, dir.z, 1.0f));
-
-    origin = initFVec3(origin4.x, origin4.y, origin4.z);
-    dir = initFVec3(dir4.x, dir4.y, dir4.z);
-    
+        
     float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
     tmin = (bounds[sign[0]].x - origin.x) * invDir.x;
@@ -99,7 +100,7 @@ int main(int argc, char* argv[])
     configureOpenGL();
     loadFunctionPointers();
 
-    camera_FA.pos = initFVec3(0.0f, 0.0f, 2.0f);
+    camera_FA.pos = initFVec3(0.0f, 0.0f, 4.0f);
     camera_FA.target = initFVec3(0.0f, 0.0f, 0.0f);
     camera_FA.absoluteUp = initFVec3(0.0f, 1.0f, 0.0f);
     
@@ -179,7 +180,8 @@ int main(int argc, char* argv[])
     unsigned projLoc = glGetUniformLocation_FA(basic, "proj");
     unsigned viewLoc = glGetUniformLocation_FA(basic, "view");
 
-    FMat4 model = translationFMat4(initFVec3(-1.5f, 1.5f, -3.0f));
+    FMat4 model = rotationFMat4(degreesToRadians(45.0f), initFVec3(0.0f, 0.0f, -1.0f));
+    model = mulFMat4(model, translationFMat4(initFVec3(1.0f, -0.5f, 2.0f)));
     FMat4 proj = perspectiveFMat4(0.01f, 10.0f, aRatio, degreesToRadians(45.0f));
     
     glUniformMatrix4fv_FA(projLoc, 1, GL_FALSE, proj.mem);
@@ -280,12 +282,10 @@ int main(int argc, char* argv[])
         FMat4 view = lookAt();
         glUniformMatrix4fv_FA(viewLoc, 1, GL_FALSE, view.mem);
         
-        //model = mulFMat4(model, rotationFMat4(0.001f * dt, initFVec3(1.0f, 1.0f, 1.0f)));
+        //model = mulFMat4(model, rotationFMat4(0.001f * dt, initFVec3(1.0f, 0.0f, 0.0f)));
         glUniformMatrix4fv_FA(modelLoc, 1, GL_FALSE, model.mem);    
 
         FVec3 mouseDir = mouseDirection(proj, view);
-
-
         unsigned intersects = rayIntersectsBox(camera_FA.pos, mouseDir, model);
 
         logU(intersects);
