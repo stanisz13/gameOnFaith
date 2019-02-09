@@ -10,7 +10,7 @@
 
 #define EPSILON 0.0000001f
 #define EPSILON_DOUBLE 0.0000000000001f
-#define PI 3.1415926535f
+#define PI 3.14159265358979f
 
 //NOTE(Stanisz13): VECTORS
 typedef struct

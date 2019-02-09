@@ -179,11 +179,12 @@ int main(int argc, char* argv[])
     unsigned modelLoc = glGetUniformLocation_FA(basic, "model");
     unsigned projLoc = glGetUniformLocation_FA(basic, "proj");
     unsigned viewLoc = glGetUniformLocation_FA(basic, "view");
-
-    FMat4 model = rotationFMat4(degreesToRadians(45.0f), initFVec3(0.0f, 0.0f, -1.0f));
-    model = mulFMat4(model, translationFMat4(initFVec3(1.0f, -0.5f, 2.0f)));
-    FMat4 proj = perspectiveFMat4(0.01f, 10.0f, aRatio, degreesToRadians(45.0f));
+    unsigned pickedLoc = glGetUniformLocation_FA(basic, "picked");
     
+    FMat4 model = rotationFMat4(degreesToRadians(45.0f), initFVec3(0.0f, 0.0f, -1.0f));
+    FMat4 proj = perspectiveFMat4(0.01f, 100.0f, aRatio, degreesToRadians(45.0f));
+    
+
     glUniformMatrix4fv_FA(projLoc, 1, GL_FALSE, proj.mem);
 
 #if 0
@@ -198,6 +199,8 @@ int main(int argc, char* argv[])
     float elapsed = 0.0f;
     float maxFrameTimeNoticed = 0.0f;
 
+    unsigned mouseMoved = 0;
+    
     while(1)
     {
         XEvent event;
@@ -257,8 +260,10 @@ int main(int argc, char* argv[])
                 case MotionNotify:
                     mouseState_FA.posX = event.xmotion.x;
                     mouseState_FA.posY = event.xmotion.y;
-
                     mouseCoordsToNDC();
+
+                    if (mouseMoved == 0)
+                        mouseMoved = 1;
                     
                     break;
 
@@ -280,15 +285,18 @@ int main(int argc, char* argv[])
 
         camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
         FMat4 view = lookAt();
-        glUniformMatrix4fv_FA(viewLoc, 1, GL_FALSE, view.mem);
         
-        //model = mulFMat4(model, rotationFMat4(0.001f * dt, initFVec3(1.0f, 0.0f, 0.0f)));
+        model = mulFMat4(model, rotationFMat4(0.0001f * dt, initFVec3(0.0f, 0.0f, 1.0f)));
+
+        if (mouseMoved == 1)
+        {
+            FVec3 mouseDir = mouseDirection(proj, view);
+            unsigned intersects = rayIntersectsBox(camera_FA.pos, mouseDir, model);
+            glUniform1i_FA(pickedLoc, (int)intersects);
+        }
+        
+        glUniformMatrix4fv_FA(viewLoc, 1, GL_FALSE, view.mem);
         glUniformMatrix4fv_FA(modelLoc, 1, GL_FALSE, model.mem);    
-
-        FVec3 mouseDir = mouseDirection(proj, view);
-        unsigned intersects = rayIntersectsBox(camera_FA.pos, mouseDir, model);
-
-        logU(intersects);
         
         glClearColor(0, 0.5, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
