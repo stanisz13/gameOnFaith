@@ -103,6 +103,8 @@ int main(int argc, char* argv[])
     camera_FA.pos = initFVec3(0.0f, 0.0f, 4.0f);
     camera_FA.target = initFVec3(0.0f, 0.0f, 0.0f);
     camera_FA.absoluteUp = initFVec3(0.0f, 1.0f, 0.0f);
+    camera_FA.zoomRangeMin = 0.0f;
+    camera_FA.zoomRangeMax = 100.0f;
     
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -180,8 +182,10 @@ int main(int argc, char* argv[])
     unsigned projLoc = glGetUniformLocation_FA(basic, "proj");
     unsigned viewLoc = glGetUniformLocation_FA(basic, "view");
     unsigned pickedLoc = glGetUniformLocation_FA(basic, "picked");
-    
+
+    FMat4 view = lookAt();
     FMat4 model = rotationFMat4(degreesToRadians(45.0f), initFVec3(0.0f, 0.0f, -1.0f));
+    model = mulFMat4(model, translationFMat4(initFVec3(-1.0f, 0.5f, 0.0f)));
     FMat4 proj = perspectiveFMat4(0.01f, 100.0f, aRatio, degreesToRadians(45.0f));
     
 
@@ -283,8 +287,25 @@ int main(int argc, char* argv[])
             break;
         }
 
-        camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
-        FMat4 view = lookAt();
+        if (mouseState_FA.wheel != 0)
+        {
+            if (mouseState_FA.wheel > 0)
+            {
+                if (camera_FA.pos.z > camera_FA.zoomRangeMin)
+                {
+                    camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
+                }
+            }
+            else
+            {
+                if (camera_FA.pos.z < camera_FA.zoomRangeMax)
+                {
+                    camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
+                }
+            }
+            
+            view = lookAt();
+        }
         
         model = mulFMat4(model, rotationFMat4(0.0001f * dt, initFVec3(0.0f, 0.0f, 1.0f)));
 

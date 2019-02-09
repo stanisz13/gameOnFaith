@@ -201,6 +201,9 @@ typedef struct
     FVec3 target;
     FVec3 absoluteUp;
 
+    float zoomRangeMin;
+    float zoomRangeMax;
+    
 } Camera;
 
 //NOTE(Stanisz13): RANDOM
