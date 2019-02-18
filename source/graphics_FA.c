@@ -800,16 +800,3 @@ unsigned loadBMPtexture(const char* filename, unsigned* texture)
 
     return success;
 }
-
-void mouseCoordsToNDC()
-{
-    mouseState_FA.posX *= 2;
-    mouseState_FA.posX -= contextData_FA.windowWidth;
-
-    mouseState_FA.posY *= 2;
-    mouseState_FA.posY -= contextData_FA.windowHeight;
-    mouseState_FA.posY *= -1.0f;
-
-    mouseState_FA.posX /= contextData_FA.windowWidth;
-    mouseState_FA.posY /= contextData_FA.windowHeight;
-}

@@ -84,6 +84,53 @@ unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
     return 1; 
 }
 
+FVec2 screenSpaceToNDC(FVec2 v)
+{
+    v.x *= 2;
+    v.x -= contextData_FA.windowWidth;
+
+    v.y *= 2;
+    v.y -= contextData_FA.windowHeight;
+    mouseState_FA.posY *= -1.0f;
+
+    v.x /= contextData_FA.windowWidth;
+    v.y /= contextData_FA.windowHeight;
+
+    return v;
+}
+
+FVec2 NDCtoScreenSpace(FVec2 v)
+{
+    v.x *= contextData_FA.windowWidth / 2;
+    v.x += contextData_FA.windowWidth / 2;
+    v.y *= contextData_FA.windowHeight / 2;
+    v.y += contextData_FA.windowHeight / 2;
+    
+    return v;
+}
+
+//NOTE(Stanisz13): Assumes, that v is in NDC.
+FVec3 NDCtoHemisphere(FVec2 v)
+{
+    v = NDCtoScreenSpace(v);
+    
+    float R = 0.5f * minUnsigned(contextData_FA.windowWidth, contextData_FA.windowHeight);
+    float RSquared = R * R;
+    
+    FVec2 o = initFVec2(0.5f * contextData_FA.windowWidth, 0.5f * contextData_FA.windowHeight); 
+    float dTerm1 = v.x - o.x;
+    float dTerm2 = v.y - o.y;
+    float DSquared = dTerm1 * dTerm1 + dTerm2 * dTerm2;
+
+    float z = 0.0f;
+
+    if (DSquared < RSquared)
+        z = sqrt(RSquared - DSquared);
+
+    FVec3 res = initFVec3(v.x, v.y, z);
+    return res;
+}
+
 int main(int argc, char* argv[])
 {
     newLine();
@@ -102,9 +149,10 @@ int main(int argc, char* argv[])
 
     camera_FA.pos = initFVec3(0.0f, 0.0f, 4.0f);
     camera_FA.target = initFVec3(0.0f, 0.0f, 0.0f);
-    camera_FA.absoluteUp = initFVec3(0.0f, 1.0f, 0.0f);
     camera_FA.zoomRangeMin = 0.0f;
     camera_FA.zoomRangeMax = 100.0f;
+
+    mouseState_FA.sensitivity = 0.1f;
     
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -184,8 +232,7 @@ int main(int argc, char* argv[])
     unsigned pickedLoc = glGetUniformLocation_FA(basic, "picked");
 
     FMat4 view = lookAt();
-    FMat4 model = rotationFMat4(degreesToRadians(45.0f), initFVec3(0.0f, 0.0f, -1.0f));
-    model = mulFMat4(model, translationFMat4(initFVec3(-1.0f, 0.5f, 0.0f)));
+    FMat4 model = rotationFMat4(degreesToRadians(45.0f), initFVec3(1.0f, 1.0f, 1.0f));
     FMat4 proj = perspectiveFMat4(0.01f, 100.0f, aRatio, degreesToRadians(45.0f));
     
 
@@ -203,7 +250,10 @@ int main(int argc, char* argv[])
     float elapsed = 0.0f;
     float maxFrameTimeNoticed = 0.0f;
 
-    unsigned mouseMoved = 0;
+    unsigned mouseMovedAtLeastOnce = 0;
+    unsigned mouseMovedThisFrame = 0;
+
+    FVec3 prevHemisphere = {};
     
     while(1)
     {
@@ -264,10 +314,14 @@ int main(int argc, char* argv[])
                 case MotionNotify:
                     mouseState_FA.posX = event.xmotion.x;
                     mouseState_FA.posY = event.xmotion.y;
-                    mouseCoordsToNDC();
+                    FVec2 pos = screenSpaceToNDC(initFVec2(mouseState_FA.posX, mouseState_FA.posY));
+                    mouseState_FA.posX = pos.x;
+                    mouseState_FA.posY = pos.y;
+                    
+                    if (mouseMovedAtLeastOnce == 0)
+                        mouseMovedAtLeastOnce = 1;
 
-                    if (mouseMoved == 0)
-                        mouseMoved = 1;
+                    mouseMovedThisFrame = 1;
                     
                     break;
 
@@ -287,6 +341,66 @@ int main(int argc, char* argv[])
             break;
         }
 
+
+        FVec2 currentMousePos = initFVec2(mouseState_FA.posX, mouseState_FA.posY);
+        FVec3 nowHemisphere = NDCtoHemisphere(currentMousePos);
+        
+        if (mouseState_FA.left == 1 && mouseMovedThisFrame == 1)
+        {
+            logS("nowHemi:");
+            logF(nowHemisphere.x);
+            logF(nowHemisphere.y);
+            logF(nowHemisphere.z);
+            newLine();
+
+            logS("prevHemi:");
+            logF(prevHemisphere.x);
+            logF(prevHemisphere.y);
+            logF(prevHemisphere.z);
+            newLine();
+                    
+            float lengthProd = lengthFVec3(nowHemisphere) * lengthFVec3(prevHemisphere);
+            if (lengthProd >= EPSILON)
+            {
+                float argument = dotProductFVec3(nowHemisphere, prevHemisphere) / lengthProd;
+                logS("argument:");
+                logF(argument);
+                
+                float angle = acos(argument);
+
+                logS("Angle:");
+                logF(angle);
+                newLine();
+            
+                FVec3 axisOfRot = crossProductFVec3(nowHemisphere, prevHemisphere);
+
+                if (lengthSquaredFVec3(axisOfRot) >= EPSILON)
+                {
+                    axisOfRot = normalizeFVec3(axisOfRot);
+            
+                    logS("axisOfRot:");
+                    logF(axisOfRot.x);
+                    logF(axisOfRot.y);
+                    logF(axisOfRot.z);
+                    newLine();
+            
+            
+                    FMat4 rotationMat = rotationFMat4(angle * dt * mouseState_FA.sensitivity,
+                                                      axisOfRot);
+
+                    FVec4 cameraPos4 = initFVec4(camera_FA.pos.x, camera_FA.pos.y, camera_FA.pos.z, 0.0f);
+                    cameraPos4 = mulFMat4ByFVec4(rotationMat, cameraPos4);
+            
+                    camera_FA.pos = initFVec3(cameraPos4.x, cameraPos4.y, cameraPos4.z);
+
+                    view = lookAt();
+                }
+
+            }
+        }
+        
+        prevHemisphere = nowHemisphere;
+        
         if (mouseState_FA.wheel != 0)
         {
             if (mouseState_FA.wheel > 0)
@@ -309,7 +423,7 @@ int main(int argc, char* argv[])
         
         model = mulFMat4(model, rotationFMat4(0.0001f * dt, initFVec3(0.0f, 0.0f, 1.0f)));
 
-        if (mouseMoved == 1)
+        if (mouseMovedAtLeastOnce == 1)
         {
             FVec3 mouseDir = mouseDirection(proj, view);
             unsigned intersects = rayIntersectsBox(camera_FA.pos, mouseDir, model);

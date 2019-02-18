@@ -147,6 +147,7 @@ typedef struct
     
     int wheel; //NOTE(Stanisz13): sign depending on scroll direction
 
+    float sensitivity;
 } MouseState;
 
 //NOTE(Stanisz13): GLOBALS

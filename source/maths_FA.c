@@ -2007,7 +2007,7 @@ FMat4 lookAt()
 
     FVec3 absoluteUp = initFVec3(0.0f, 1.0f, 0.0f);
     
-    FVec3 dir = normalizeFVec3(addFVec3(camera_FA.pos, scaleFVec3(camera_FA.target, -1.0f)));
+    FVec3 dir = normalizeFVec3(subFVec3(camera_FA.pos, camera_FA.target));
     FVec3 right = normalizeFVec3(crossProductFVec3(absoluteUp, dir));
     FVec3 up = crossProductFVec3(dir, right);
     

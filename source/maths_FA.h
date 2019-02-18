@@ -199,8 +199,7 @@ typedef struct
 {
     FVec3 pos;
     FVec3 target;
-    FVec3 absoluteUp;
-
+    
     float zoomRangeMin;
     float zoomRangeMax;
     
