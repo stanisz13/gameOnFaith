@@ -12,7 +12,7 @@ uniform mat4 view;
 
 void main()
 {
-    posPass = proj *view * model * vec4(inPos, 1.0f);
+    posPass = proj * view * model * vec4(inPos, 1.0f);
     gl_Position = posPass;
     TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }

@@ -1625,31 +1625,25 @@ float detFMat3(FMat3 a)
 
 float detFMat4(FMat4 a)
 {
-    float res = a.mem[12] * a.mem[9] * a.mem[6] * a.mem[3]
-        - a.mem[8] * a.mem[13] * a.mem[6] * a.mem[3]
-        + a.mem[12] * a.mem[5] * a.mem[10] * a.mem[3]
-        + a.mem[4] * a.mem[13] * a.mem[10] * a.mem[3]
-        + a.mem[8] * a.mem[5] * a.mem[14] * a.mem[3]
-        - a.mem[4] * a.mem[9] * a.mem[14] * a.mem[3]
-        - a.mem[12] * a.mem[9] * a.mem[2] * a.mem[7]
-        + a.mem[8] * a.mem[13] * a.mem[2] * a.mem[7]
-        + a.mem[12] * a.mem[1] * a.mem[10] * a.mem[7]
-        - a.mem[0] * a.mem[13] * a.mem[10] * a.mem[7]
-        - a.mem[8] * a.mem[1] * a.mem[14] * a.mem[7]
-        + a.mem[0] * a.mem[9] * a.mem[14] * a.mem[7]
-        + a.mem[12] * a.mem[5] * a.mem[2] * a.mem[11]
-        - a.mem[4] * a.mem[13] * a.mem[2] * a.mem[11]
-        - a.mem[12] * a.mem[1] * a.mem[6] * a.mem[11]
-        + a.mem[0] * a.mem[13] * a.mem[6] * a.mem[11]
-        + a.mem[4] * a.mem[1] * a.mem[14] * a.mem[11]
-        - a.mem[0] * a.mem[5] * a.mem[14] * a.mem[11]
-        - a.mem[8] * a.mem[5] * a.mem[2] * a.mem[15]
-        + a.mem[4] * a.mem[9] * a.mem[2] * a.mem[15]
-        + a.mem[8] * a.mem[1] * a.mem[6] * a.mem[15]
-        - a.mem[0] * a.mem[9] * a.mem[6] * a.mem[15]
-        - a.mem[4] * a.mem[1] * a.mem[10] * a.mem[15]
-        + a.mem[0] * a.mem[5] * a.mem[10] * a.mem[15];
+    float res;
+    
+    float SubFactor00 = a.col3.mem[2] * a.col4.mem[3] - a.col4.mem[2] * a.col3.mem[3];
+    float SubFactor01 = a.col3.mem[1] * a.col4.mem[3] - a.col4.mem[1] * a.col3.mem[3];
+    float SubFactor02 = a.col3.mem[1] * a.col4.mem[2] - a.col4.mem[1] * a.col3.mem[2];
+    float SubFactor03 = a.col3.mem[0] * a.col4.mem[3] - a.col4.mem[0] * a.col3.mem[3];
+    float SubFactor04 = a.col3.mem[0] * a.col4.mem[2] - a.col4.mem[0] * a.col3.mem[2];
+    float SubFactor05 = a.col3.mem[0] * a.col4.mem[1] - a.col4.mem[0] * a.col3.mem[1];
+    
+    FVec4 detCof = initFVec4(
+        a.col2.mem[1] * SubFactor00 - a.col2.mem[2] * SubFactor01 + a.col2.mem[3] * SubFactor02,
+        -(a.col2.mem[0] * SubFactor00 - a.col2.mem[2] * SubFactor03 + a.col2.mem[3] * SubFactor04),
+        a.col2.mem[0] * SubFactor01 - a.col2.mem[1] * SubFactor03 + a.col2.mem[3] * SubFactor05,
+        -(a.col2.mem[0] * SubFactor02 - a.col2.mem[1] * SubFactor04 + a.col2.mem[2] * SubFactor05)
+                             );
 
+    res = (a.col1.mem[0] * detCof.x + a.col1.mem[1] * detCof.y +
+           a.col1.mem[2] * detCof.z + a.col1.mem[3] * detCof.w);
+    
     return res;
 }
 
@@ -1919,21 +1913,24 @@ FMat4 perspectiveFMat4(float near, float far,
 {
     FMat4 res = {};
 
-    float top = tan(FOVradians / 2.0f) * near;
-    float bottom = -1.0f * top;
-    float right = top * aRatio;
-    float left = - right;
+    float tanHalfFovY = tan(FOVradians / 2.0f);
+
+#if 0
+    mat<4, 4, T, defaultp> Result(static_cast<T>(0));
+    Result[0][0] = static_cast<T>(1) / (aspect * tanHalfFovy);
+    Result[1][1] = static_cast<T>(1) / (tanHalfFovy);
+    Result[2][2] = - (zFar + zNear) / (zFar - zNear);
+    Result[2][3] = - static_cast<T>(1);
+    Result[3][2] = - (static_cast<T>(2) * zFar * zNear) / (zFar - zNear);
+
+#endif
+
+    res.col1.mem[0] = 1.0f / (aRatio * tanHalfFovY);
+    res.col2.mem[1] = 1.0f / tanHalfFovY;
     
-    res.col1.x = (2.0f * near) / (right - left);
-
-    res.col2.y = (2.0f * near) / (top - bottom);
-
-    res.col3.x = (right + left) / (right - left);
-    res.col3.y = (top + bottom) / (top - bottom);
-    res.col3.z = (-far - near) / (far - near);
-    res.col3.w = -1.0f;
-
-    res.col4.z = (-2.0f * far * near) / (far - near);
+    res.col3.mem[2] = - (far + near) / (far - near);
+    res.col3.mem[3] = -1.0f;
+    res.col4.mem[2] = - (2.0f * far * near) / (far - near); 
     
     return res;
 }
@@ -2007,28 +2004,32 @@ FMat4 lookAt()
 
     FVec3 absoluteUp = initFVec3(0.0f, 1.0f, 0.0f);
     
-    FVec3 dir = normalizeFVec3(subFVec3(camera_FA.pos, camera_FA.target));
-    FVec3 right = normalizeFVec3(crossProductFVec3(absoluteUp, dir));
-    FVec3 up = crossProductFVec3(dir, right);
-    
+    FVec3 dir = normalizeFVec3(subFVec3(camera_FA.target, camera_FA.pos));
+    FVec3 right = normalizeFVec3(crossProductFVec3(dir, absoluteUp));
+    FVec3 up = crossProductFVec3(right, dir);
+
+    //NOTE(Stanisz13): 3 WEEKS OF DEBUGGING JUST TO FIND THIS!??!!??!
+    // I EVEN MODIFIED GLM CODE TO DEBUG WHAT IT DOES WHAAATTTTT
+    up.y *= -1.0f;
+
     res.col1.x = right.x;
     res.col1.y = up.x;
-    res.col1.z = dir.x;
+    res.col1.z = -dir.x;
     res.col1.w = 0.0f;
 
     res.col2.x = right.y;
     res.col2.y = up.y;
-    res.col2.z = dir.y;
+    res.col2.z = -dir.y;
     res.col2.w = 0.0f;
 
     res.col3.x = right.z;
     res.col3.y = up.z;
-    res.col3.z = dir.z;
+    res.col3.z = -dir.z;
     res.col3.w = 0.0f;
 
-    res.col4.x = -camera_FA.pos.x * right.x - camera_FA.pos.y * right.y - camera_FA.pos.z * right.z;
-    res.col4.y = -camera_FA.pos.x * up.x - camera_FA.pos.y * up.y - camera_FA.pos.z * up.z;
-    res.col4.z = -camera_FA.pos.x * dir.x - camera_FA.pos.y * dir.y - camera_FA.pos.z * dir.z;
+    res.col4.x = -dotProductFVec3(right, camera_FA.pos);//-camera_FA.pos.x * right.x - camera_FA.pos.y * right.y - camera_FA.pos.z * right.z;
+    res.col4.y = -dotProductFVec3(up, camera_FA.pos);//-camera_FA.pos.x * up.x - camera_FA.pos.y * up.y - camera_FA.pos.z * up.z;
+    res.col4.z = dotProductFVec3(dir, camera_FA.pos);//-camera_FA.pos.x * dir.x - camera_FA.pos.y * dir.y - camera_FA.pos.z * dir.z;
     res.col4.w = 1.0f;
     
     return res;

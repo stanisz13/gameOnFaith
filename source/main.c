@@ -9,7 +9,7 @@ FVec3 mouseDirection(FMat4 proj, FMat4 view)
     FVec3 res = {};
     
     FVec4 clipCoords = initFVec4(mouseState_FA.posX, mouseState_FA.posY, -1.0f, 1.0f);
-
+    
     float projDet = detFMat4(proj);
     FMat4 invertedProjection = inverseFMat4(proj, projDet);
     FVec4 eyeCoords = mulFMat4ByFVec4(invertedProjection, clipCoords);
@@ -18,8 +18,9 @@ FVec3 mouseDirection(FMat4 proj, FMat4 view)
 
     float viewDet = detFMat4(view);
     FMat4 invertedView = inverseFMat4(view, viewDet);
+    
     FVec4 worldCoords = mulFMat4ByFVec4(invertedView, eyeCoords);
-
+    
     res = initFVec3(worldCoords.x, worldCoords.y, worldCoords.z);
 
     res = normalizeFVec3(res);
@@ -27,7 +28,7 @@ FVec3 mouseDirection(FMat4 proj, FMat4 view)
 
     //NOTE(Stanisz13): noticed that the sign of Y is wrong, dont know
     // if maybe this should be that way!
-    res.y *= -1.0f;
+    //res.y *= -1.0f;
     
     return res;
 }
@@ -232,10 +233,9 @@ int main(int argc, char* argv[])
     unsigned pickedLoc = glGetUniformLocation_FA(basic, "picked");
 
     FMat4 view = lookAt();
-    FMat4 model = rotationFMat4(degreesToRadians(45.0f), initFVec3(1.0f, 1.0f, 1.0f));
-    FMat4 proj = perspectiveFMat4(0.01f, 100.0f, aRatio, degreesToRadians(45.0f));
+    FMat4 model = identityFMat4();//rotationFMat4(degreesToRadians(45.0f), initFVec3(1.0f, 1.0f, 1.0f));
+    FMat4 proj = perspectiveFMat4(0.1f, 100.0f, aRatio, degreesToRadians(45.0f));
     
-
     glUniformMatrix4fv_FA(projLoc, 1, GL_FALSE, proj.mem);
 
 #if 0
@@ -249,7 +249,8 @@ int main(int argc, char* argv[])
     float dt = 0.0f;
     float elapsed = 0.0f;
     float maxFrameTimeNoticed = 0.0f;
-
+    float totalElapsedTime = 0.0f;
+    
     unsigned mouseMovedAtLeastOnce = 0;
     unsigned mouseMovedThisFrame = 0;
 
@@ -344,7 +345,6 @@ int main(int argc, char* argv[])
 
         FVec2 currentMousePos = initFVec2(mouseState_FA.posX, mouseState_FA.posY);
         FVec3 nowHemisphere = NDCtoHemisphere(currentMousePos);
-        
         if (mouseState_FA.left == 1 && mouseMovedThisFrame == 1)
         {
             logS("nowHemi:");
@@ -365,14 +365,14 @@ int main(int argc, char* argv[])
                 float argument = dotProductFVec3(nowHemisphere, prevHemisphere) / lengthProd;
                 logS("argument:");
                 logF(argument);
-                
-                float angle = acos(argument);
 
+                float angle = 0.01f;//acos(argument);
+                
                 logS("Angle:");
                 logF(angle);
                 newLine();
             
-                FVec3 axisOfRot = crossProductFVec3(nowHemisphere, prevHemisphere);
+                FVec3 axisOfRot = crossProductFVec3(prevHemisphere, nowHemisphere);
 
                 if (lengthSquaredFVec3(axisOfRot) >= EPSILON)
                 {
@@ -392,10 +392,11 @@ int main(int argc, char* argv[])
                     cameraPos4 = mulFMat4ByFVec4(rotationMat, cameraPos4);
             
                     camera_FA.pos = initFVec3(cameraPos4.x, cameraPos4.y, cameraPos4.z);
-
-                    view = lookAt();
+                    logS("cameraDist:");
+                    logF(lengthFVec3(camera_FA.pos));
+                    newLine();
+                    
                 }
-
             }
         }
         
@@ -417,12 +418,12 @@ int main(int argc, char* argv[])
                     camera_FA.pos.z -= (float)mouseState_FA.wheel/ 2.0f;
                 }
             }
-            
-            view = lookAt();
         }
         
-        model = mulFMat4(model, rotationFMat4(0.0001f * dt, initFVec3(0.0f, 0.0f, 1.0f)));
-
+        //model = mulFMat4(model, rotationFMat4(0.0001f * dt, initFVec3(0.0f, 0.0f, 1.0f)));
+        view = lookAt();
+        
+        
         if (mouseMovedAtLeastOnce == 1)
         {
             FVec3 mouseDir = mouseDirection(proj, view);
@@ -451,6 +452,7 @@ int main(int argc, char* argv[])
         prevTime = nowTime;
 
         elapsed += dt;
+        totalElapsedTime += dt;
         if (dt - maxFrameTimeNoticed > EPSILON)
         {
             maxFrameTimeNoticed = dt;
