@@ -3,11 +3,24 @@
 
 int isRunning = 1;
 
+void logFMat4(FMat4 m)
+{
+    printf("%f %f %f %f\n", m.col1.x, m.col2.x, m.col3.x, m.col4.x);
+    printf("%f %f %f %f\n", m.col1.y, m.col2.y, m.col3.y, m.col4.y);
+    printf("%f %f %f %f\n", m.col1.z, m.col2.z, m.col3.z, m.col4.z);
+    printf("%f %f %f %f\n", m.col1.w, m.col2.w, m.col3.w, m.col4.w);
+
+    newLine();
+}
 
 FVec3 mouseDirection(FMat4 proj, FMat4 view)
 {
     FVec3 res = {};
-    
+
+#if 0    
+    mouseState_FA.posX = 0.182222f;
+    mouseState_FA.posY = -0.32f;
+    #endif
     FVec4 clipCoords = initFVec4(mouseState_FA.posX, mouseState_FA.posY, -1.0f, 1.0f);
     
     float projDet = detFMat4(proj);
@@ -18,13 +31,21 @@ FVec3 mouseDirection(FMat4 proj, FMat4 view)
 
     float viewDet = detFMat4(view);
     FMat4 invertedView = inverseFMat4(view, viewDet);
-    
     FVec4 worldCoords = mulFMat4ByFVec4(invertedView, eyeCoords);
     
     res = initFVec3(worldCoords.x, worldCoords.y, worldCoords.z);
 
     res = normalizeFVec3(res);
 
+
+    logFMat4(proj);
+    logFMat4(invertedProjection);
+    logFMat4(view);
+    logFMat4(invertedView);
+
+    
+    printf("%f %f %f\n", res.x, res.y, res.z);
+    
     
     return res;
 }
@@ -34,16 +55,17 @@ unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
     float detModel = detFMat4(model);
     FMat4 modelInverse = inverseFMat4(model, detModel);
     
-    FVec4 origin4 = mulFMat4ByFVec4(modelInverse, initFVec4(origin.x, origin.y, origin.z, 0.0f));
-    FVec4 dir4 = mulFMat4ByFVec4(modelInverse, initFVec4(dir.x, dir.y, dir.z, 0.0f));
-    
+    FVec4 origin4 = mulFMat4ByFVec4(modelInverse, initFVec4(origin.x, origin.y, origin.z, 1.0f));
+    FVec4 dir4 = mulFMat4ByFVec4(modelInverse, initFVec4(dir.x, dir.y, dir.z, 1.0f));
+
     origin = initFVec3(origin4.x, origin4.y, origin4.z);
     dir = initFVec3(dir4.x, dir4.y, dir4.z);
+
 
 #if 1
     int sign[3];
 
-        FVec3 invDir = {};
+    FVec3 invDir = {};
     if (fabs(dir.x) > 0.0f)
         invDir.x = 1.0f / dir.x;
     if (fabs(dir.y) > 0.0f)
@@ -54,6 +76,8 @@ unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
     sign[0] = (invDir.x < 0.0f);
     sign[1] = (invDir.y < 0.0f);
     sign[2] = (invDir.z < 0.0f);
+
+    printf("%i %i %i\n", sign[0], sign[1], sign[2]);
 
     FVec3 bounds[2];
     bounds[0] = initFVec3(-0.5f, -0.5f, -0.5f);
@@ -67,6 +91,8 @@ unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
     tymin = (bounds[sign[1]].y - origin.y) * invDir.y;
     tymax = (bounds[1-sign[1]].y - origin.y) * invDir.y;
 
+    printf("%f %f %f %f\n", tmin, tmax, tymin, tymax);
+    
     if ((tmin > tymax) || (tymin > tmax))
         return 0;
     if (tymin > tmin)
@@ -77,6 +103,8 @@ unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
     tzmin = (bounds[sign[2]].z - origin.z) * invDir.z;
     tzmax = (bounds[1-sign[2]].z - origin.z) * invDir.z;
 
+    printf("%f %f %f %f\n", tmin, tmax, tymin, tymax);
+ 
     if ((tmin > tzmax) || (tzmin > tmax))
         return 0;
     if (tzmin > tmin)
@@ -151,8 +179,8 @@ unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
         double t1 = (bounds[0].mem[i] - origin.mem[i])*invDir.mem[i];
         double t2 = (bounds[1].mem[i] - origin.mem[i])*invDir.mem[i];
 
-        tmin = maxFloat(tmin, minFloat(t1, t2));
-        tmax = minFloat(tmax, maxFloat(t1, t2));
+        tmin = fmax(tmin, fmin(fmin(t1, t2), tmax));
+        tmax = fmin(tmax, fmax(fmax(t1, t2), tmin));
     }
 
     return ((int)tmax > maxFloat(tmin, 0.0f));
@@ -185,6 +213,105 @@ unsigned rayIntersectsBox(FVec3 origin, FVec3 dir, FMat4 model)
     return t[9];
 
 #endif
+#if 0
+    FVec3 bounds[2];
+    bounds[0] = initFVec3(-0.5f, -0.5f, -0.5f);
+    bounds[1] = initFVec3(0.5f, 0.5f, 0.5f);
+
+    FVec3 invDir = {};
+    invDir.x = 1.0f / dir.x;
+    invDir.y = 1.0f / dir.y;
+    invDir.z = 1.0f / dir.z;
+
+    double t1 = (bounds[0].x - origin.x)*invDir.x;
+    double t2 = (bounds[1].x - origin.x)*invDir.x;
+ 
+    double tmin = fmin(t1, t2);
+    double tmax = fmax(t1, t2);
+ 
+    for (int i = 1; i < 3; ++i) {
+        t1 = (bounds[0].mem[i] - origin.mem[i])*invDir.mem[i];
+        t2 = (bounds[1].mem[i] - origin.mem[i])*invDir.mem[i];
+ 
+        tmin = fmax(tmin, fmin(t1, t2));
+        tmax = fmin(tmax, fmax(t1, t2));
+    }
+ 
+    return (tmax > fmax(tmin, 0.0));
+
+#endif
+#if 0
+    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+    FVec3 parameters[2];
+    parameters[0] = initFVec3(-0.5f, -0.5f, -0.5f);
+    parameters[1] = initFVec3(0.5f, 0.5f, 0.5f);
+
+    float t0 = 0.01f;
+    float t1 = 1000.0f;
+
+    FVec3 inv_direction = initFVec3(1.0f/dir.x, 1.0f/dir.y, 1.0f/dir.z);
+    int sign[3];
+    sign[0] = (inv_direction.x < 0);
+    sign[1] = (inv_direction.y < 0);
+    sign[2] = (inv_direction.z < 0);
+    
+    tmin = (parameters[sign[0]].x - origin.x) * inv_direction.x;
+    tmax = (parameters[1-sign[0]].x - origin.x) * inv_direction.x;
+    tymin = (parameters[sign[1]].y - origin.y) * inv_direction.y;
+    tymax = (parameters[1-sign[1]].y - origin.y) * inv_direction.y;
+    if ( (tmin > tymax) || (tymin > tmax) ) 
+        return 0;
+    if (tymin > tmin)
+        tmin = tymin;
+    if (tymax < tmax)
+        tmax = tymax;
+    tzmin = (parameters[sign[2]].z - origin.z) * inv_direction.z;
+    tzmax = (parameters[1-sign[2]].z - origin.z) * inv_direction.z;
+    if ( (tmin > tzmax) || (tzmin > tmax) ) 
+        return 0;
+    if (tzmin > tmin)
+        tmin = tzmin;
+    if (tzmax < tmax)
+        tmax = tzmax;
+    return ( (tmin < t1) && (tmax > t0) );    
+#endif
+#if 0
+    float tmin, tmax, tymin, tymax, tzmin, tzmax;
+    FVec3 bounds[2];
+    bounds[0] = initFVec3(-0.5f, -0.5f, -0.5f);
+    bounds[1] = initFVec3(0.5f, 0.5f, 0.5f);
+
+    FVec3 invdir = initFVec3(1.0f/dir.x, 1.0f/dir.y, 1.0f/dir.z);
+    IVec3 sign;
+    sign.x = (invdir.x < 0);
+    sign.y = (invdir.y < 0);
+    sign.z = (invdir.z < 0);
+
+    tmin = (bounds[sign.x].x - origin.x) * invdir.x;
+    tmax = (bounds[1 - sign.x].x - origin.x) * invdir.x;
+    tymin = (bounds[sign.y].y - origin.y) * invdir.y;
+    tymax = (bounds[1 - sign.y].y - origin.y) * invdir.y;
+
+    if ((tmin > tymax) || (tymin > tmax))
+        return 0;
+    if (tymin > tmin)
+        tmin = tymin;
+    if (tymax < tmax)
+        tmax = tymax;
+
+    tzmin = (bounds[sign.z].z - origin.z) * invdir.z;
+    tzmax = (bounds[1 - sign.z].z - origin.z) * invdir.z;
+
+    if ((tmin > tzmax) || (tzmin > tmax))
+        return 0;
+    if (tzmin > tmin)
+        tmin = tzmin;
+    if (tzmax < tmax)
+        tmax = tzmax;
+
+    return 1;
+#endif
 }
 
 FVec2 screenSpaceToNDC(FVec2 v)
@@ -194,8 +321,8 @@ FVec2 screenSpaceToNDC(FVec2 v)
 
     v.y *= 2;
     v.y -= contextData_FA.windowHeight;
-    mouseState_FA.posY *= -1.0f;
-
+    v.y *= -1.0f;
+    
     v.x /= contextData_FA.windowWidth;
     v.y /= contextData_FA.windowHeight;
 
@@ -250,7 +377,7 @@ int main(int argc, char* argv[])
     configureOpenGL();
     loadFunctionPointers();
 
-    camera_FA.pos = initFVec3(1.0f, 2.0f, 4.0f);
+    camera_FA.pos = initFVec3(1.0f, 2.0f, 5.0f);
     camera_FA.target = initFVec3(0.0f, 0.0f, 0.0f);
     camera_FA.zoomRangeMin = 0.0f;
     camera_FA.zoomRangeMax = 100.0f;
@@ -443,8 +570,17 @@ int main(int argc, char* argv[])
         {
             break;
         }
+        int win_x, win_y, root_x, root_y = 0;
+        unsigned int mask = 0;
+        Window child_win, root_win;
 
+        printf("ASDbASJBDKA %i %i | %i %i \n\n\n", root_x, root_y, win_x, win_y);
 
+        FVec2 poss = screenSpaceToNDC(initFVec2(win_x, win_y));
+//        if (mouseState_FA.posY > 0)
+        //         mouseState_FA.posY *= -1.0f;
+        printf("ASDbASJBDKA %f %f \n\n\n", mouseState_FA.posX, mouseState_FA.posY);
+        
         FVec2 currentMousePos = initFVec2(mouseState_FA.posX, mouseState_FA.posY);
         FVec3 nowHemisphere = NDCtoHemisphere(currentMousePos);
         if (mouseState_FA.left == 1 && mouseMovedThisFrame == 1)
