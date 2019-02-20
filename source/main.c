@@ -344,7 +344,7 @@ FVec3 NDCtoHemisphere(FVec2 v)
 {
     v = NDCtoScreenSpace(v);
     
-    float R = 0.5f * minUnsigned(contextData_FA.windowWidth, contextData_FA.windowHeight);
+    float R = 0.5f * maxUnsigned(contextData_FA.windowWidth, contextData_FA.windowHeight);
     float RSquared = R * R;
     
     FVec2 o = initFVec2(0.5f * contextData_FA.windowWidth, 0.5f * contextData_FA.windowHeight); 
@@ -484,6 +484,10 @@ int main(int argc, char* argv[])
     unsigned mouseMovedThisFrame = 0;
 
     FVec3 prevHemisphere = {};
+    float mousePrevX = 0.0f;
+    float mousePrevY = 0.0f;
+    float rotX = 0.0f;
+    float rotY = 0.0f;
     
     while(1)
     {
@@ -585,6 +589,7 @@ int main(int argc, char* argv[])
         FVec3 nowHemisphere = NDCtoHemisphere(currentMousePos);
         if (mouseState_FA.left == 1 && mouseMovedThisFrame == 1)
         {
+#if 1
             logS("nowHemi:");
             logF(nowHemisphere.x);
             logF(nowHemisphere.y);
@@ -615,7 +620,7 @@ int main(int argc, char* argv[])
                 if (lengthSquaredFVec3(axisOfRot) >= EPSILON)
                 {
                     axisOfRot = normalizeFVec3(axisOfRot);
-            
+                    
                     logS("axisOfRot:");
                     logF(axisOfRot.x);
                     logF(axisOfRot.y);
@@ -636,9 +641,47 @@ int main(int argc, char* argv[])
                     
                 }
             }
+#endif
+#if 0
+            FVec2 diffMouse =
+                initFVec2(mouseState_FA.posX - mousePrevX, mouseState_FA.posY - mousePrevY);
+
+            rotX += diffMouse.x;
+            rotY += diffMouse.y;
+
+            rotX *= mouseState_FA.sensitivity;
+            rotY *= mouseState_FA.sensitivity;
+            
+            if (rotY > 89.0f)
+                rotY = 89.0f;
+            if (rotY < -89.0f)
+                rotY = -89.0f;
+
+            float radX = degreesToRadians(rotX);
+            float radY = degreesToRadians(rotY);
+            
+            FVec3 front;
+            front.x = cos(radX) * cos(radY);
+            front.y = sin(radY);
+            front.z = sin(radX) * cos(radY);
+            
+            front = normalizeFVec3(front);            
+
+            float l = lengthFVec3(camera_FA.pos);
+            
+            FMat4 rotationMat = rotationFMat4(dt * dotProductFVec3(front, camera_FA.pos) / (lengthFVec3(front) * lengthFVec3(camera_FA.pos)),
+                                              crossProductFVec3(camera_FA.pos, front));
+            
+            FVec4 cameraPos4 = initFVec4(1.0f, 2.0f, 5.0f, 0.0f);
+            cameraPos4 = mulFMat4ByFVec4(rotationMat, cameraPos4);
+
+            camera_FA.pos = initFVec3(cameraPos4.x, cameraPos4.y, cameraPos4.z);
+#endif
         }
         
         prevHemisphere = nowHemisphere;
+        mousePrevX = mouseState_FA.posX;
+        mousePrevY = mouseState_FA.posY;
         
         if (mouseState_FA.wheel != 0)
         {
