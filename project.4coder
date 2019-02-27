@@ -1,0 +1,40 @@
+version(1);
+
+project_name = "gameOnFaith";
+
+patterns = {
+"*.c",
+"*.h",
+"*.vs",
+"*.fs",
+"*.sh",
+"*.4coder",
+};
+
+blacklist_patterns = {
+".*",
+};
+
+load_paths = 
+{
+	{
+	{{"."}}, .os = "linux"
+	}
+};
+
+command_list = {
+	{
+		.name = "build",
+		.out = "*compilation*", .footer_panel = true, .save_dirty_files = true, .cursor_at_end = false,
+		.cmd = {{"make debug", .os = "linux"}, },
+	},
+	{
+		.name = "run",
+		.out = "*run*", .footer_panel = false, .save_dirty_files = false, .cursor_at_end = true,
+		.cmd = {{"./main", .os = "linux"}, },
+	},
+
+};
+
+fkey_command[1] = "build";
+fkey_command[2] = "run";

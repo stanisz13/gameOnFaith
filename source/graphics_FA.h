@@ -87,7 +87,7 @@ typedef struct
     Window window;
     Colormap cmap;
     GLXContext ctx;
-
+    
     Atom deleteMessage;
     
 } ContextData;
@@ -95,7 +95,7 @@ typedef struct
 typedef struct
 {
     unsigned mask;
-
+    
 } UserVSyncData;
 
 typedef struct
@@ -120,7 +120,7 @@ typedef struct
 {
     unsigned fbo[2];
     unsigned texture[2];
-
+    
 } PingpongBuffer;
 
 typedef struct
@@ -135,30 +135,9 @@ typedef struct
     
 } ScreenQuad;
 
-typedef struct
-{
-    unsigned left;
-    unsigned right;
-    unsigned middle;
+void configureOpenGL(ContextData* cdata, UserVSyncData* vdata);
 
-    //NOTE(Stanisz13): Left top corner is (0, 0), bottom right corner is (screenW, screenH);
-    float posX;
-    float posY;
-    
-    int wheel; //NOTE(Stanisz13): sign depending on scroll direction
-
-    float sensitivity;
-} MouseState;
-
-//NOTE(Stanisz13): GLOBALS
-MouseState mouseState_FA;
-unsigned keysPressed_FA[200];
-ContextData contextData_FA;
-UserVSyncData vSyncData_FA;
-
-void configureOpenGL();
-
-void freeContextData();
+void freeContextData(ContextData* cdata);
 
 void loadFunctionPointers();
 
@@ -173,7 +152,7 @@ Color RGBAtoColor(unsigned char r, unsigned char g,
 
 void createTextureForDrawingBuffer(PixelBufferData* pdata);
 
-void drawTextureWithBufferData(PixelBufferData* pdata);
+void drawTextureWithBufferData(PixelBufferData* pdata, ContextData* cdata);
 
 void freePixelData(PixelBufferData* pdata);
 
@@ -181,7 +160,7 @@ float lerpFloat(float v0, float v1, float t);
 
 Color lerpColor(const Color* a, const Color* b, const float t);
 
-void configurePingpongBuffer(PingpongBuffer* pbuf);
+void configurePingpongBuffer(PingpongBuffer* pbuf, ContextData* cdata);
 
 void configureScreenQuadWithEBO(ScreenQuadWithEBO* squad);
 
@@ -193,17 +172,15 @@ void freeScreenQuadWithEBO(ScreenQuadWithEBO* squad);
 
 unsigned createShaderProgram(const char* pathToVS, const char* pathToFS);
 
-void enableVSyncIfPossible();
+void enableVSyncIfPossible(ContextData* cdata, UserVSyncData* vdata);
 
-void disableVSyncIfPossible();
+void disableVSyncIfPossible(ContextData* cdata, UserVSyncData* vdata);
 
-void enableAdaptiveVSyncIfPossible();
+void enableAdaptiveVSyncIfPossible(ContextData* cdata, UserVSyncData* vdata);
 
 //NOTE(Stanisz13): The bmp must have alpha channel, values for pixels are
 // expected to be 32bit. The memory layout of loaded image is ARGB, but
 // the memory layout of stored data is ABGR.
 unsigned loadBMPtexture(const char* filename, unsigned* texture);
-
-void mouseCoordsToNDC();
 
 #endif
