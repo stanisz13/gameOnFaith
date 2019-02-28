@@ -6,6 +6,8 @@ MouseState mouseState_FA;
 unsigned keysPressed_FA[200];
 ContextData contextData_FA;
 UserVSyncData vSyncData_FA;
+RandomSeries randomSeries_FA;
+Camera camera_FA;
 
 
 int isRunning = 1;
@@ -247,7 +249,7 @@ int main(int argc, char* argv[])
     unsigned viewLoc = glGetUniformLocation_FA(basic, "view");
     unsigned pickedLoc = glGetUniformLocation_FA(basic, "picked");
     
-    FMat4 view = lookAt();
+    FMat4 view = lookAt(&camera_FA);
     FMat4 model = identityFMat4();//rotationFMat4(degreesToRadians(45.0f), initFVec3(1.0f, 1.0f, 1.0f));
     FMat4 proj = perspectiveFMat4(0.1f, 100.0f, aRatio, degreesToRadians(45.0f));
     
@@ -404,7 +406,7 @@ int main(int argc, char* argv[])
         }
         
         //model = mulFMat4(model, rotationFMat4(0.0001f * dt, initFVec3(0.0f, 0.0f, 1.0f)));
-        view = lookAt();
+        view = lookAt(&camera_FA);
         
         
         if (mouseMovedAtLeastOnce == 1)

@@ -212,10 +212,6 @@ typedef struct
     
 } RandomSeries;
 
-//NOTE(Stanisz13): GLOBALS
-RandomSeries randomSeries_FA;
-Camera camera_FA;
-
 //NOTE(Stanisz13): FUNCTIONS
 
 //NOTE(Stanisz13): NUMERIC
@@ -236,26 +232,26 @@ float degreesToRadians(float deg);
 float radiansToDegrees(float rad);
 
 //NOTE(Stanisz13): RANDOM
-void setRandomSeed(unsigned s);
-void setRandomSeedTime();
+void setRandomSeed(RandomSeries* rs, unsigned s);
+void setRandomSeedTime(RandomSeries* rs);
 
-unsigned getRandomUnsignedOnInterval(unsigned a, unsigned b);
-float getRandomFloatOnInterval(float a, float b);
-double getRandomDoubleOnInterval(double a, double b);
-int getRandomIntOnInterval(int a, int b);
+unsigned getRandomUnsignedOnInterval(RandomSeries* rs, unsigned a, unsigned b);
+float getRandomFloatOnInterval(RandomSeries* rs, float a, float b);
+double getRandomDoubleOnInterval(RandomSeries* rs, double a, double b);
+int getRandomIntOnInterval(RandomSeries* rs, int a, int b);
 
-FVec2 getRandomFVec2OnInterval(float a, float b);
-DVec2 getRandomDVec2OnInterval(double a, double b);
-UVec2 getRandomUVec2OnInterval(unsigned a, unsigned b);
-IVec2 getRandomIVec2OnInterval(int a, int b);
-FVec3 getRandomFVec3OnInterval(float a, float b);
-DVec3 getRandomDVec3OnInterval(double a, double b);
-UVec3 getRandomUVec3OnInterval(unsigned a, unsigned b);
-IVec3 getRandomIVec3OnInterval(int a, int b);
-FVec4 getRandomFVec4OnInterval(float a, float b);
-DVec4 getRandomDVec4OnInterval(double a, double b);
-UVec4 getRandomUVec4OnInterval(unsigned a, unsigned b);
-IVec4 getRandomIVec4OnInterval(int a, int b);
+FVec2 getRandomFVec2OnInterval(RandomSeries* rs, float a, float b);
+DVec2 getRandomDVec2OnInterval(RandomSeries* rs, double a, double b);
+UVec2 getRandomUVec2OnInterval(RandomSeries* rs, unsigned a, unsigned b);
+IVec2 getRandomIVec2OnInterval(RandomSeries* rs, int a, int b);
+FVec3 getRandomFVec3OnInterval(RandomSeries* rs, float a, float b);
+DVec3 getRandomDVec3OnInterval(RandomSeries* rs, double a, double b);
+UVec3 getRandomUVec3OnInterval(RandomSeries* rs, unsigned a, unsigned b);
+IVec3 getRandomIVec3OnInterval(RandomSeries* rs, int a, int b);
+FVec4 getRandomFVec4OnInterval(RandomSeries* rs, float a, float b);
+DVec4 getRandomDVec4OnInterval(RandomSeries* rs, double a, double b);
+UVec4 getRandomUVec4OnInterval(RandomSeries* rs, unsigned a, unsigned b);
+IVec4 getRandomIVec4OnInterval(RandomSeries* rs, int a, int b);
 
 //NOTE(Stanisz13): VECTORS
 FVec2 scaleFVec2(FVec2 v, float s);
@@ -416,12 +412,12 @@ FVec3 mulFMat3ByFVec3(FMat3 a, FVec3 b);
 FVec4 mulFMat4ByFVec4(FMat4 a, FVec4 b);
 
 FMat4 perspectiveFMat4(float near, float far,
-                      float aRatio, float FOVradians);
+                       float aRatio, float FOVradians);
 
 FMat4 rotationFMat4(float angleRadians, FVec3 rotationAxis);
 FMat4 translationFMat4(FVec3 v);
 FMat4 scalingFMat4(FVec3 v);
 
-FMat4 lookAt();
+FMat4 lookAt(Camera* cam);
 
 #endif
