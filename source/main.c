@@ -1,5 +1,6 @@
 #include "graphics_FA.h"
 #include "interaction_FA.h"
+#include "random_FA.h"
 
 //NOTE(Stanisz13): GLOBALS
 MouseState mouseState_FA;
@@ -171,6 +172,9 @@ int main(int argc, char* argv[])
     camera_FA.zoomRangeMax = 100.0f;
     
     mouseState_FA.sensitivity = 0.1f;
+    
+    
+    setRandomSeed(&randomSeries_FA, 13123);
     
     float vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
