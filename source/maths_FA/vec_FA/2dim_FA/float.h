@@ -1,6 +1,8 @@
 #ifndef FVEC2_FA_H
 #define FVEC2_FA_H
 
+#include "../../base_FA.h"
+
 typedef struct
 {
     union

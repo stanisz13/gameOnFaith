@@ -1,7 +1,8 @@
 #ifndef FMAT2_FA_H
 #define FMAT2_FA_H
 
-#include "../vec_FA/2dim_FA/float.h"
+#include "../../base_FA.h"
+#include "../../vec_FA/2dim_FA/float.h"
 
 typedef struct
 {

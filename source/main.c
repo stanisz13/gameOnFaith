@@ -1,9 +1,28 @@
 #include "graphics_FA.h"
 #include "interaction_FA.h"
+
+#include "maths_FA/base_FA.h"
 #include "maths_FA/random_FA.h"
+
 #include "maths_FA/vec_FA/2dim_FA/float.h"
 #include "maths_FA/vec_FA/3dim_FA/float.h"
 #include "maths_FA/vec_FA/4dim_FA/float.h"
+
+#include "maths_FA/mat_FA/2dim_FA/float.h"
+#include "maths_FA/mat_FA/3dim_FA/float.h"
+#include "maths_FA/mat_FA/4dim_FA/float.h"
+
+
+typedef struct
+{
+    FVec3 pos;
+    FVec3 target;
+    
+    float zoomRangeMin;
+    float zoomRangeMax;
+    
+} Camera;
+
 
 //NOTE(Stanisz13): GLOBALS
 MouseState mouseState_FA;
@@ -12,6 +31,7 @@ ContextData contextData_FA;
 UserVSyncData vSyncData_FA;
 RandomSeries randomSeries_FA;
 Camera camera_FA;
+
 
 
 int isRunning = 1;
@@ -256,7 +276,7 @@ int main(int argc, char* argv[])
     unsigned viewLoc = glGetUniformLocation_FA(basic, "view");
     unsigned pickedLoc = glGetUniformLocation_FA(basic, "picked");
     
-    FMat4 view = lookAt(&camera_FA);
+    FMat4 view = lookAt(camera_FA.pos, camera_FA.target, initFVec3(0.0f, 1.0f, 0.0f));
     FMat4 model = identityFMat4();//rotationFMat4(degreesToRadians(45.0f), initFVec3(1.0f, 1.0f, 1.0f));
     FMat4 proj = perspectiveFMat4(0.1f, 100.0f, aRatio, degreesToRadians(45.0f));
     
@@ -413,7 +433,7 @@ int main(int argc, char* argv[])
         }
         
         //model = mulFMat4(model, rotationFMat4(0.0001f * dt, initFVec3(0.0f, 0.0f, 1.0f)));
-        view = lookAt(&camera_FA);
+        view = lookAt(camera_FA.pos, camera_FA.target, initFVec3(0.0f, 1.0f, 0.0f));
         
         
         if (mouseMovedAtLeastOnce == 1)

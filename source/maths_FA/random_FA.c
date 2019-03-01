@@ -96,6 +96,30 @@ FVec2 getRandomFVec2OnInterval(RandomSeries* rs, float a, float b)
     return res;
 }
 
+FVec3 getRandomFVec3OnInterval(RandomSeries* rs, float a, float b)
+{
+    FVec3 res;
+    
+    res.x = getRandomFloatOnInterval(rs, a, b);
+    res.y = getRandomFloatOnInterval(rs, a, b);
+    res.z = getRandomFloatOnInterval(rs, a, b);
+    
+    return res;
+}
+
+FVec4 getRandomFVec4OnInterval(RandomSeries* rs, float a, float b)
+{
+    FVec4 res;
+    
+    res.x = getRandomFloatOnInterval(rs, a, b);
+    res.y = getRandomFloatOnInterval(rs, a, b);
+    res.z = getRandomFloatOnInterval(rs, a, b);
+    res.w = getRandomFloatOnInterval(rs, a, b);
+    
+    return res;
+}
+
+#if 0
 DVec2 getRandomDVec2OnInterval(RandomSeries* rs, double a, double b)
 {
     DVec2 res;
@@ -122,17 +146,6 @@ IVec2 getRandomIVec2OnInterval(RandomSeries* rs, int a, int b)
     
     res.x = getRandomIntOnInterval(rs, a, b);
     res.y = getRandomIntOnInterval(rs, a, b);
-    
-    return res;
-}
-
-FVec3 getRandomFVec3OnInterval(RandomSeries* rs, float a, float b)
-{
-    FVec3 res;
-    
-    res.x = getRandomFloatOnInterval(rs, a, b);
-    res.y = getRandomFloatOnInterval(rs, a, b);
-    res.z = getRandomFloatOnInterval(rs, a, b);
     
     return res;
 }
@@ -166,18 +179,6 @@ IVec3 getRandomIVec3OnInterval(RandomSeries* rs, int a, int b)
     res.x = getRandomIntOnInterval(rs, a, b);
     res.y = getRandomIntOnInterval(rs, a, b);
     res.z = getRandomIntOnInterval(rs, a, b);
-    
-    return res;
-}
-
-FVec4 getRandomFVec4OnInterval(RandomSeries* rs, float a, float b)
-{
-    FVec4 res;
-    
-    res.x = getRandomFloatOnInterval(rs, a, b);
-    res.y = getRandomFloatOnInterval(rs, a, b);
-    res.z = getRandomFloatOnInterval(rs, a, b);
-    res.w = getRandomFloatOnInterval(rs, a, b);
     
     return res;
 }
@@ -217,3 +218,4 @@ IVec4 getRandomIVec4OnInterval(RandomSeries* rs, int a, int b)
     
     return res;
 }
+#endif
