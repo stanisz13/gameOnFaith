@@ -1,6 +1,9 @@
 #include "graphics_FA.h"
 #include "interaction_FA.h"
-#include "random_FA.h"
+#include "maths_FA/random_FA.h"
+#include "maths_FA/vec_FA/2dim_FA/float.h"
+#include "maths_FA/vec_FA/3dim_FA/float.h"
+#include "maths_FA/vec_FA/4dim_FA/float.h"
 
 //NOTE(Stanisz13): GLOBALS
 MouseState mouseState_FA;

@@ -1,7 +1,8 @@
 #ifndef INTERACTION_FA_H
 #define INTERACTION_FA_H
 
-#include "maths_FA.h"
+#include "maths_FA/base_FA.h"
+#include "maths_FA/vec_FA/2dim_FA/float.h"
 
 typedef struct
 {

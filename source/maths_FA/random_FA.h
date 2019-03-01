@@ -1,7 +1,13 @@
 #ifndef RANDOM_FA_H
 #define RANDOM_FA_H
 
-#include "maths_FA.h"
+#include "base_FA.h"
+
+typedef struct
+{
+    unsigned seed;
+    
+} RandomSeries;
 
 void setRandomSeed(RandomSeries* rs, unsigned s);
 void setRandomSeedTime(RandomSeries* rs);

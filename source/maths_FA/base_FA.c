@@ -1,4 +1,4 @@
-#include "maths_FA.h"
+#include "base_FA.h"
 
 float absFloat(float v)
 {
@@ -123,16 +123,6 @@ float radiansToDegrees(float rad)
 }
 
 
-FVec2 scaleFVec2(FVec2 v, float s)
-{
-    FVec2 res = v;
-    
-    res.x *= s;
-    res.y *= s;
-    
-    return res;
-}
-
 DVec2 scaleDVec2(DVec2 v, double s)
 {
     DVec2 res = v;
@@ -159,17 +149,6 @@ IVec2 scaleIVec2(IVec2 v, int s)
     
     res.x *= s;
     res.y *= s;
-    
-    return res;
-}
-
-FVec3 scaleFVec3(FVec3 v, float s)
-{
-    FVec3 res = v;
-    
-    res.x *= s;
-    res.y *= s;
-    res.z *= s;
     
     return res;
 }
@@ -203,18 +182,6 @@ IVec3 scaleIVec3(IVec3 v, int s)
     res.x *= s;
     res.y *= s;
     res.z *= s;
-    
-    return res;
-}
-
-FVec4 scaleFVec4(FVec4 v, float s)
-{
-    FVec4 res = v;
-    
-    res.x *= s;
-    res.y *= s;
-    res.z *= s;
-    res.w *= s;
     
     return res;
 }
@@ -255,15 +222,6 @@ IVec4 scaleIVec4(IVec4 v, int s)
     return res;
 }
 
-FVec2 addFVec2(FVec2 v, FVec2 w)
-{
-    FVec2 res = v;
-    res.x += w.x;
-    res.y += w.y;
-    
-    return res;
-}
-
 DVec2 addDVec2(DVec2 v, DVec2 w)
 {
     DVec2 res = v;
@@ -291,15 +249,7 @@ IVec2 addIVec2(IVec2 v, IVec2 w)
     return res;
 }
 
-FVec3 addFVec3(FVec3 v, FVec3 w)
-{
-    FVec3 res = v;
-    res.x += w.x;
-    res.y += w.y;
-    res.z += w.z;
-    
-    return res;
-}
+
 DVec3 addDVec3(DVec3 v, DVec3 w)
 {
     DVec3 res = v;
@@ -326,17 +276,6 @@ IVec3 addIVec3(IVec3 v, IVec3 w)
     res.x += w.x;
     res.y += w.y;
     res.z += w.z;
-    
-    return res;
-}
-
-FVec4 addFVec4(FVec4 v, FVec4 w)
-{
-    FVec4 res = v;
-    res.x += w.x;
-    res.y += w.y;
-    res.z += w.z;
-    res.w += w.w;
     
     return res;
 }
@@ -376,15 +315,6 @@ IVec4 addIVec4(IVec4 v, IVec4 w)
     return res;
 }
 
-FVec2 subFVec2(FVec2 v, FVec2 w)
-{
-    FVec2 res = v;
-    res.x -= w.x;
-    res.y -= w.y;
-    
-    return res;
-}
-
 DVec2 subDVec2(DVec2 v, DVec2 w)
 {
     DVec2 res = v;
@@ -412,15 +342,7 @@ IVec2 subIVec2(IVec2 v, IVec2 w)
     return res;
 }
 
-FVec3 subFVec3(FVec3 v, FVec3 w)
-{
-    FVec3 res = v;
-    res.x -= w.x;
-    res.y -= w.y;
-    res.z -= w.z;
-    
-    return res;
-}
+
 DVec3 subDVec3(DVec3 v, DVec3 w)
 {
     DVec3 res = v;
@@ -447,17 +369,6 @@ IVec3 subIVec3(IVec3 v, IVec3 w)
     res.x -= w.x;
     res.y -= w.y;
     res.z -= w.z;
-    
-    return res;
-}
-
-FVec4 subFVec4(FVec4 v, FVec4 w)
-{
-    FVec4 res = v;
-    res.x -= w.x;
-    res.y -= w.y;
-    res.z -= w.z;
-    res.w -= w.w;
     
     return res;
 }
@@ -497,15 +408,6 @@ IVec4 subIVec4(IVec4 v, IVec4 w)
     return res;
 }
 
-FVec2 hadamardFVec2(FVec2 v, FVec2 w)
-{
-    FVec2 res = v;
-    res.x *= w.x;
-    res.y *= w.y;
-    
-    return res;
-}
-
 DVec2 hadamardDVec2(DVec2 v, DVec2 w)
 {
     DVec2 res = v;
@@ -533,15 +435,6 @@ IVec2 hadamardIVec2(IVec2 v, IVec2 w)
     return res;
 }
 
-FVec3 hadamardFVec3(FVec3 v, FVec3 w)
-{
-    FVec3 res = v;
-    res.x *= w.x;
-    res.y *= w.y;
-    res.z *= w.z;
-    
-    return res;
-}
 
 DVec3 hadamardDVec3(DVec3 v, DVec3 w)
 {
@@ -569,17 +462,6 @@ IVec3 hadamardIVec3(IVec3 v, IVec3 w)
     res.x *= w.x;
     res.y *= w.y;
     res.z *= w.z;
-    
-    return res;
-}
-
-FVec4 hadamardFVec4(FVec4 v, FVec4 w)
-{
-    FVec4 res = v;
-    res.x *= w.x;
-    res.y *= w.y;
-    res.z *= w.z;
-    res.w *= w.w;
     
     return res;
 }
@@ -617,16 +499,6 @@ IVec4 hadamardIVec4(IVec4 v, IVec4 w)
     return res;
 }
 
-float dotProductFVec2(FVec2 v, FVec2 w)
-{
-    float res = 0;
-    
-    res += v.x * w.x;
-    res += v.y * w.y;
-    
-    return res;
-}
-
 double dotProductDVec2(DVec2 v, DVec2 w)
 {
     double res = 0;
@@ -653,17 +525,6 @@ int dotProductIVec2(IVec2 v, IVec2 w)
     
     res += v.x * w.x;
     res += v.y * w.y;
-    
-    return res;
-}
-
-float dotProductFVec3(FVec3 v, FVec3 w)
-{
-    float res = 0;
-    
-    res += v.x * w.x;
-    res += v.y * w.y;
-    res += v.z * w.z;
     
     return res;
 }
@@ -697,18 +558,6 @@ int dotProductIVec3(IVec3 v, IVec3 w)
     res += v.x * w.x;
     res += v.y * w.y;
     res += v.z * w.z;
-    
-    return res;
-}
-
-float dotProductFVec4(FVec4 v, FVec4 w)
-{
-    float res = 0;
-    
-    res += v.x * w.x;
-    res += v.y * w.y;
-    res += v.z * w.z;
-    res += v.w * w.w;
     
     return res;
 }
@@ -749,25 +598,6 @@ int dotProductIVec4(IVec4 v, IVec4 w)
     return res;    
 }
 
-FVec3 crossProductFVec3(FVec3 a, FVec3 b)
-{
-    FVec3 res;
-    
-    res.x = a.y * b.z - a.z * b.y;
-    res.y = a.x * b.z - a.z * b.x;
-    res.z = a.x * b.y - a.y * b.x;
-    
-    return res;
-}
-
-float lengthSquaredFVec2(FVec2 v)
-{
-    float res = v.x * v.x
-        + v.y * v.y; 
-    
-    return res;
-}
-
 double lengthSquaredDVec2(DVec2 v)
 {
     double res = v.x * v.x
@@ -787,15 +617,6 @@ unsigned lengthSquaredIVec2(IVec2 v)
 {
     unsigned res = v.x * v.x
         + v.y * v.y; 
-    
-    return res;
-}
-
-float lengthSquaredFVec3(FVec3 v)
-{
-    float res = v.x * v.x
-        + v.y * v.y
-        + v.z * v.z;
     
     return res;
 }
@@ -823,16 +644,6 @@ unsigned lengthSquaredIVec3(IVec3 v)
     unsigned res = v.x * v.x
         + v.y * v.y
         + v.z * v.z;
-    
-    return res;
-}
-
-float lengthSquaredFVec4(FVec4 v)
-{
-    float res = v.x * v.x
-        + v.y * v.y
-        + v.z * v.z
-        + v.w * v.w;
     
     return res;
 }
@@ -867,13 +678,6 @@ unsigned lengthSquaredIVec4(IVec4 v)
     return res;
 }        
 
-float lengthFVec2(FVec2 v)
-{
-    float res = sqrt((float)lengthSquaredFVec2(v));
-    
-    return res;
-}
-
 double lengthDVec2(DVec2 v)
 {
     double res = sqrt((double)lengthSquaredDVec2(v));
@@ -894,13 +698,6 @@ float lengthIVec2(IVec2 v)
     
     return res;
 }
-
-float lengthFVec3(FVec3 v)
-{
-    float res = sqrt((float)lengthSquaredFVec3(v));
-    
-    return res;
-}    
 
 double lengthDVec3(DVec3 v)
 {
@@ -923,13 +720,6 @@ float lengthIVec3(IVec3 v)
     return res;
 }
 
-float lengthFVec4(FVec4 v)
-{
-    float res = sqrt((float)lengthSquaredFVec4(v));
-    
-    return res;
-}
-
 double lengthDVec4(DVec4 v)
 {
     double res = sqrt((double)lengthSquaredDVec4(v));
@@ -947,15 +737,6 @@ float lengthUVec4(UVec4 v)
 float lengthIVec4(IVec4 v)
 {
     float res = sqrt((float)lengthSquaredIVec4(v));
-    
-    return res;
-}
-
-FVec2 normalizeFVec2(FVec2 v)
-{
-    FVec2 res;
-    
-    res = scaleFVec2(v, 1.0f / lengthFVec2(v));
     
     return res;
 }
@@ -987,15 +768,6 @@ IVec2 normalizeIVec2(IVec2 v)
     return res;
 }
 
-FVec3 normalizeFVec3(FVec3 v)
-{
-    FVec3 res;
-    
-    res = scaleFVec3(v, 1.0f / lengthFVec3(v));
-    
-    return res;
-}
-
 DVec3 normalizeDVec3(DVec3 v)
 {
     DVec3 res;
@@ -1023,15 +795,6 @@ IVec3 normalizeIVec3(IVec3 v)
     return res;
 }
 
-FVec4 normalizeFVec4(FVec4 v)
-{
-    FVec4 res;
-    
-    res = scaleFVec4(v, 1.0f / lengthFVec4(v));
-    
-    return res;
-}
-
 DVec4 normalizeDVec4(DVec4 v)
 {
     DVec4 res;
@@ -1055,39 +818,6 @@ IVec4 normalizeIVec4(IVec4 v)
     IVec4 res;
     
     res = scaleIVec4(v, 1.0f / lengthIVec4(v));
-    
-    return res;
-}
-
-FVec2 initFVec2(float a, float b)
-{
-    FVec2 res;
-    
-    res.x = a;
-    res.y = b;
-    
-    return res;
-}
-
-FVec3 initFVec3(float a, float b, float c)
-{
-    FVec3 res;
-    
-    res.x = a;
-    res.y = b;
-    res.z = c;
-    
-    return res;
-}
-
-FVec4 initFVec4(float a, float b, float c, float d)
-{
-    FVec4 res;
-    
-    res.x = a;
-    res.y = b;
-    res.z = c;
-    res.w = d;
     
     return res;
 }
